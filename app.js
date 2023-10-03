@@ -31,11 +31,11 @@ const {
       Item: marshall({
         empId: body.empId,
         certificateDetails : {
-        TechnologyName: certDetails.TechnologyName,                     //certified technology name object
-        CertificationAuthority: certDetails.CertificationAuthority,
-        CertifiedDate: certDetails.CertifiedDate,
-        CertificationValidLastDate: certDetails.CertificationValidLastDate,
-        IsActive: certDetails.IsActive,                  //required boolean
+        TechnologyName: certificateDetails.TechnologyName,                     //certified technology name object
+        CertificationAuthority: certificateDetails.CertificationAuthority,
+        CertifiedDate: certificateDetails.CertifiedDate,
+        CertificationValidLastDate: certificateDetails.CertificationValidLastDate,
+        IsActive: certificateDetails.IsActive,                  //required boolean
         CreatedDateTime: Date.now(), 
         //UpdatedDateTime: bankDetails.IsActive, 
       }}, { removeUndefinedValues: true }),                       //for remove undefined fields
