@@ -24,7 +24,6 @@ functions:
       - Effect: "Allow"
         Action:
           - "dynamodb:PutItem"
-          - "dynamodb:PostItem"
         Resource: !GetAtt PostsTable.Arn
 resources:
   Resources:
@@ -38,8 +37,6 @@ resources:
         KeySchema:
           - AttributeName: empId
             KeyType: HASH
-          - AttributeName: empId
-            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
