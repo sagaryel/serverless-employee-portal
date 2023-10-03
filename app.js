@@ -13,9 +13,9 @@ const {
     const response = { statusCode: 200 };
     try {
       const body = JSON.parse(event.body);
-      const certDetails = body.certificateDetails
+      const certificateDetails = body.certificateDetails
     // Check for required fields
-    if (!body.certDetails.TechnologyName || !body.certDetails.CertificationAuthority || !body.certDetails.CertifiedDate || !body.certDetails.CertificationValidLastDate  || !body.certDetails.IsActive) {
+    if (!body.certificateDetails.TechnologyName || !body.certificateDetails.CertificationAuthority || !body.certificateDetails.CertifiedDate || !body.certificateDetails.CertificationValidLastDate  || !body.certificateDetails.IsActive) {
         throw new Error('Required fields are missing.');
       }
   
