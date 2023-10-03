@@ -30,7 +30,7 @@ const {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: marshall({
         empId: body.empId,
-    certificationDetails : {
+        certificateDetails : {
         TechnologyName: certDetails.TechnologyName,                     //certified technology name object
         CertificationAuthority: certDetails.CertificationAuthority,
         CertifiedDate: certDetails.CertifiedDate,
