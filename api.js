@@ -35,7 +35,7 @@ const {
         CertificationAuthority: certDetails.CertificationAuthority,
         CertifiedDate: certDetails.CertifiedDate,
         CertificationValidLastDate: certDetails.CertificationValidLastDate,
-        IsActive: bankDetails.BankAccountNumber,                  //required boolean
+        IsActive: certDetails.IsActive,                  //required boolean
         CreatedDateTime: Date.now(), 
         //UpdatedDateTime: bankDetails.IsActive, 
       }}, { removeUndefinedValues: true }),                       //for remove undefined fields
