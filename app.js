@@ -40,7 +40,7 @@ const {
         //UpdatedDateTime: bankDetails.IsActive, 
       }}, { removeUndefinedValues: true }),                       //for remove undefined fields
     };
-    const createResult=await db.send(new PutItemCommand(params));
+    const createResult=await client.send(new PutItemCommand(params));
     response.body = JSON.stringify({
       message: 'Successfully created post.',
       createResult,
