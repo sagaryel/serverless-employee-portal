@@ -12,6 +12,7 @@
     "@aws-sdk/client-dynamodb": "^3.423.0",
     "@aws-sdk/util-dynamodb": "^3.423.0",
     "aws-sdk": "^2.1468.0",
+    "moment": "^2.29.4",
     "serverless-iam-roles-per-function": "^3.2.0"
   }
 }
