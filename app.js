@@ -12,7 +12,7 @@ const {
   const client = new DynamoDBClient();
 
   const currentDate = Date.now(); // get the current date and time in milliseconds
-  const formattedDate = moment(currentDate).format('YYYY/MM/DD');
+  const formattedDate = moment(currentDate).format('YYYY-MM-DD');
 
 
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
