@@ -92,7 +92,7 @@ const {
             ...acc,
             [`#key${index}`]: key,
           }),
-          {'#u': 'updateddatetime'}
+          {'UpdatedDateTime': 'updateddatetime'}
         ),
         ExpressionAttributeValues: marshall(
           objKeys.reduce(
@@ -100,7 +100,7 @@ const {
               ...acc,
               [`:value${index}`]: body[key],
             }),
-            {':u': formattedDate}
+            {':UpdatedDateTime': formattedDate}
           )
         ),
       };
