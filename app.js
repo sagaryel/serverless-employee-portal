@@ -7,6 +7,25 @@ const {
   const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
   
   const client = new DynamoDBClient();
+
+  var currentDate = Date.now(); // get the current date and time in milliseconds
+  var formattedDate = moment(currentDate).format('YYYY/MM/DD');
+
+
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  var nameRegex = /^[A-Za-z ]{3,32}$/;
+
+  const validatePostData = (employee) => {
+    if( employee.CertificationValidLastDate < employee.CertifiedDate ){
+      throw new Error('certificate last date cannot be less then certified date.');
+    }
+    if(!(dateRegex.test(employee.CertifiedDate) && dateRegex.test(employee.CertificationValidLastDate))){
+      throw new Error('Invalid date format.');
+    }
+    if(!(nameRegex.test(employee.CertificationAuthority.test) && nameRegex.test(employee.TechnologyName))){
+      throw new Error('Invalid data.');
+    }
+  }
   
   const createEmpCertificate = async (event) => {
     console.log("inside the add certification details method");
@@ -20,12 +39,9 @@ const {
       }
   
       // Validate the incoming data
-      //validatePostData(body);
+      validatePostData(certificateDetails);
   
-    //   const empData = {
-    //     TableName: process.env.DYNAMODB_TABLE_NAME,
-    //     Key: marshall({ empId: body.empId }),
-    //   };
+    
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: marshall({
@@ -36,8 +52,8 @@ const {
         CertifiedDate: certificateDetails.CertifiedDate,
         CertificationValidLastDate: certificateDetails.CertificationValidLastDate,
         IsActive: certificateDetails.IsActive,                  //required boolean
-        CreatedDateTime: Date.now(), 
-        //UpdatedDateTime: bankDetails.IsActive, 
+        CreatedDateTime: formattedDate, 
+        //UpdatedDateTime: 
       }}, { removeUndefinedValues: true }),                       //for remove undefined fields
     };
     const createResult=await client.send(new PutItemCommand(params));
