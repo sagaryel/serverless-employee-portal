@@ -100,7 +100,7 @@ const {
               ...acc,
               [`:value${index}`]: body[key],
             }),
-            {':UpdatedDateTime': formattedDate}
+            {':u': formattedDate}
           )
         ),
       };
