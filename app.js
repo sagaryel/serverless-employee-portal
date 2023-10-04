@@ -8,12 +8,12 @@ const {
   
   const client = new DynamoDBClient();
 
-  var currentDate = Date.now(); // get the current date and time in milliseconds
-  var formattedDate = moment(currentDate).format('YYYY/MM/DD');
+  const currentDate = Date.now(); // get the current date and time in milliseconds
+  const formattedDate = moment(currentDate).format('YYYY/MM/DD');
 
 
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  var nameRegex = /^[A-Za-z ]{3,32}$/;
+  const nameRegex = /^[A-Za-z ]{3,32}$/;
 
   const validatePostData = (employee) => {
     if( employee.CertificationValidLastDate < employee.CertifiedDate ){
