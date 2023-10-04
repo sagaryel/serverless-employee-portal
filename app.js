@@ -61,14 +61,59 @@ const {
     };
     const createResult=await client.send(new PutItemCommand(params));
     response.body = JSON.stringify({
-      message: 'Successfully created post.',
+      message: 'Successfully created certificate details.',
       createResult,
     });
      } catch (e) {
       console.error(e);
       response.statusCode = 500;
       response.body = JSON.stringify({
-        message: 'Failed to create post.',
+        message: 'Failed to certificate details.',
+        errorMsg: e.message,
+        errorStack: e.stack,
+      });
+    }
+    return response;
+  };
+
+  const updateEmpCertificate = async (event) => {
+    const response = { statusCode: 200 };
+    try {
+      const body = JSON.parse(event.body);
+      const objKeys = Object.keys(body);
+      const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME,
+        Key: marshall({ empId: event.pathParameters.empI }),
+        UpdateExpression: `SET ${objKeys
+          .map((_, index) => `#key${index} = :value${index}`)
+          .join(', ')}`,
+        ExpressionAttributeNames: objKeys.reduce(
+          (acc, key, index) => ({
+            ...acc,
+            [`#key${index}`]: key,
+          }),
+          {}
+        ),
+        ExpressionAttributeValues: marshall(
+          objKeys.reduce(
+            (acc, key, index) => ({
+              ...acc,
+              [`:value${index}`]: body[key],
+            }),
+            {}
+          )
+        ),
+      };
+      const updateResult = await client.send(new UpdateItemCommand(params));
+      response.body = JSON.stringify({
+        message: 'Successfully updated certificate details.',
+        updateResult,
+      });
+    } catch (e) {
+      console.error(e);
+      response.statusCode = 500;
+      response.body = JSON.stringify({
+        message: 'Failed to update certificate details.',
         errorMsg: e.message,
         errorStack: e.stack,
       });
@@ -78,5 +123,6 @@ const {
   // ... rest of your code ...
   
   module.exports = {
-    createEmpCertificate
+    createEmpCertificate,
+    updateEmpCertificate
   };
