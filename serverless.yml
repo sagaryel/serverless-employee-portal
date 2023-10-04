@@ -32,7 +32,7 @@ functions:
     timeout: 5 # seconds
     events:
       - http:
-          path: employee/certificate/empId
+          path: employee/certificate/{empId}
           method: PUT
     iamRoleStatements:
       - Effect: "Allow"
