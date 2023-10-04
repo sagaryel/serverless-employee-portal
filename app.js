@@ -6,8 +6,8 @@ const {
   } = require('@aws-sdk/client-dynamodb');
   const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
   
+  const moment= require('moment')
 
-import {moment} from 'moment';
   
   const client = new DynamoDBClient();
 
