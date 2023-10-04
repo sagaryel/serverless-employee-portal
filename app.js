@@ -6,6 +6,9 @@ const {
   } = require('@aws-sdk/client-dynamodb');
   const { marshall, unmarshall } = require('@aws-sdk/util-dynamodb');
   
+
+import {moment} from 'moment';
+  
   const client = new DynamoDBClient();
 
   const currentDate = Date.now(); // get the current date and time in milliseconds
