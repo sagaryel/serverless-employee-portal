@@ -100,7 +100,7 @@ const {
               ...acc,
               [`:value${index}`]: body[key],
             }),
-            { ':u': formattedDate }
+            {  ':u': str(datetime.now()) }
           )
         ),
       };
