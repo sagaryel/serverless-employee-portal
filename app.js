@@ -11,13 +11,15 @@ const {
   
   const client = new DynamoDBClient();
 
-  const currentDate = Date.now(); // get the current date and time in milliseconds
-  const formattedDate = moment(currentDate).format('YYYY-MM-DD');
+  const currentDate = Date.now();      // get the current date and time in milliseconds
+  const formattedDate = moment(currentDate).format('YYYY-MM-DD');    //formating date
 
 
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  const nameRegex = /^[A-Za-z ]{3,32}$/;
+  
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;   // dateformate YYYY-MM-DD
+  const nameRegex = /^[A-Za-z ]{3,32}$/;     // character limit min 3 to max 32
 
+  // validating the each parameter 
   const validatePostData = (employee) => {
     if( employee.CertificationValidLastDate < employee.CertifiedDate ){
       throw new Error('certificate last date cannot be less then certified date.');
@@ -30,6 +32,7 @@ const {
     }
   }
   
+  // creating a employee certification data
   const createEmpCertificate = async (event) => {
     console.log("inside the add certification details method");
     const response = { statusCode: 200 };
@@ -54,10 +57,10 @@ const {
         CertificationAuthority: certificateDetails.CertificationAuthority,
         CertifiedDate: certificateDetails.CertifiedDate,
         CertificationValidLastDate: certificateDetails.CertificationValidLastDate,
-        IsActive: certificateDetails.IsActive,                  //required boolean
+        IsActive: certificateDetails.IsActive,                                 //required boolean
         CreatedDateTime: formattedDate, 
         //UpdatedDateTime: 
-      }}, { removeUndefinedValues: true }),                       //for remove undefined fields
+      }}, { removeUndefinedValues: true }),                                    //for remove undefined fields
     };
     const createResult=await client.send(new PutItemCommand(params));
     response.body = JSON.stringify({
@@ -76,6 +79,7 @@ const {
     return response;
   };
 
+  // updating the employee certification details by employee id
   const updateEmpCertificate = async (event) => {
     const response = { statusCode: 200 };
     try {
@@ -120,7 +124,6 @@ const {
     }
     return response;
   };
-  // ... rest of your code ...
   
   module.exports = {
     createEmpCertificate,
