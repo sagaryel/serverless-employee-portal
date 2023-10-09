@@ -42,7 +42,14 @@ const createEmpCertificate = async (event) => {
     }
 
     // Validate the incoming data
-   validatePostData(certificateDetails);
+   const validationError = validatePostData(certificateDetails);
+   if (validationError) {
+    response.statusCode =400;
+   response.body=JSON.stringify({
+     message: validationError,
+   })
+   throw new Error(validationError);
+ }
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: marshall({
@@ -80,7 +87,16 @@ const updateEmpCertificate = async (event) => {
   const response = { statusCode: 200 };
   try {
     const body = JSON.parse(event.body);
+    const certificateDetails = body.certificateDetails
     const objKeys = Object.keys(body);
+    const validationError = validatePostData(certificateDetails);
+   if (validationError) {
+    response.statusCode =400;
+   response.body=JSON.stringify({
+     message: validationError,
+   })
+   throw new Error(validationError);
+ }
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Key: marshall({ empId: event.pathParameters.empId }),
