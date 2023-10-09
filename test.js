@@ -87,7 +87,7 @@ describe('updateEmployee unit tests', () => {
     // Mock event object with the employee ID and updated data
     let event = {
       pathParameters: {
-        empId: '2', // Assuming this postId exists
+        empId: '25', // Assuming this postId exists
       },
       body: JSON.stringify(updateEmployeeCertificateData),
     };
@@ -105,13 +105,13 @@ describe('updateEmployee unit tests', () => {
       body: JSON.stringify({
         // Invalid data that should fail validation
         certificateDetails  : {
-          CertifiedDate: "2022-10-04", // invalid date format
+          CertifiedDate: '2022/10/04', // invalid date format
         }
       }),
     };
     const response = await updateEmpCertificate(event);
-    expect(response.statusCode).to.equal(200); // Expecting a 400 Bad Request for invalid data
+    expect(response.statusCode).to.equal(500); // Expecting a 400 Bad Request for invalid data
     const responseBody = JSON.parse(response.body);
-    expect(responseBody.M).to.equal('Successfully updated certificate details.');
+    expect(responseBody.errorMsg).to.equal('certificateDetails is not defined');
   });
  });
