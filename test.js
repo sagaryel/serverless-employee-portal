@@ -105,7 +105,8 @@ describe('updateEmployee unit tests', () => {
       body: JSON.stringify({
         // Invalid data that should fail validation
         certificateDetails  : {
-          CertifiedDate: '2022/10/04', // invalid date format
+          CertifiedDate: '2022/10/04',
+          CertificationValidLastDate: '10/05/2023'    // invalid date format
         }
       }),
     };

@@ -81,8 +81,6 @@ const updateEmpCertificate = async (event) => {
   try {
     const body = JSON.parse(event.body);
     const objKeys = Object.keys(body);
-    const certificateDetails = body.certificateDetails
-    validatePostData(certificateDetails); 
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Key: marshall({ empId: event.pathParameters.empId }),
