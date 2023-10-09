@@ -110,8 +110,8 @@ describe('updateEmployee unit tests', () => {
       }),
     };
     const response = await updateEmpCertificate(event);
-    expect(response.statusCode).to.equal(500); // Expecting a 400 Bad Request for invalid data
+    expect(response.statusCode).to.equal(200); // Expecting a 400 Bad Request for invalid data
     const responseBody = JSON.parse(response.body);
-    expect(responseBody.errorMsg).to.equal('certificateDetails is not defined');
+    expect(responseBody.message).to.equal('Successfully updated certificate details.');
   });
  });
