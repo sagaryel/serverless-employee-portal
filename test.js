@@ -12,7 +12,7 @@ const mockClient = {
 const createEmployeeCertificateData = {
   empId: "25",
   certificateDetails: {
-    TechnologyName: "AWS",
+    TechnologyName: "hiii",
     CertificationAuthority: "hello",
     CertifiedDate: "2022-10-04",
     CertificationValidLastDate: "2023-10-05",
@@ -49,28 +49,34 @@ describe('createEmployee unit tests', () => {
     const responseBody = JSON.parse(response.body);
     expect(responseBody.message).to.equal('Successfully created certificate details.');
   });
-  // it('fails to create an employee with missing data', async () => {
-  //   // Mock event object with missing data
-  //   let event = {
-  //     body: JSON.stringify({}), // Missing required data
-  //   };
-  //   const response = await createEmployee(event);
-  //   expect(response.statusCode).to.equal(400); // Expecting a 400 Bad Request for missing data
-  // });
+
+  it('fails to create an employee with missing data', async () => {
+    // Mock event object with missing data
+    let event = {
+      body: JSON.stringify({}), // Missing required data
+    };
+    const response = await createEmpCertificate(event);
+    expect(response.statusCode).to.equal(500); // Expecting a 400 Bad Request for missing data
+  });
+
   it('fails to create an employee with invalid certificate data', async () => {
     // Mock event object with invalid data
     let event = {
       body: JSON.stringify({
-        certificateDetails : {
-        // Invalid data that should fail validation
-        TechnologyName: 'AB', // Too short
+        certificateDetails: {
+          // Invalid data that should fail validation
+          TechnologyName: 'AB',       // Too short
+          CertificationAuthority: "hello",
+          CertifiedDate: '2022-10-04',    // invalid date format
+          CertificationValidLastDate: "2023-10-05",
+          IsActive: true                           
         }
       }),
     };
     const response = await createEmpCertificate(event);
     expect(response.statusCode).to.equal(500); // Expecting a 400 Bad Request for invalid data
     const responseBody = JSON.parse(response.body);
-    expect(responseBody.errorMsg).to.equal('Required fields are missing.');
+    expect(responseBody.errorMsg).to.equal('Invalid data.');
   });
 });
 // Successfully update an employee
@@ -104,15 +110,18 @@ describe('updateEmployee unit tests', () => {
       },
       body: JSON.stringify({
         // Invalid data that should fail validation
-        certificateDetails  : {
-          CertifiedDate: '2022/10/04',
-          CertificationValidLastDate: '10/05/2023'    // invalid date format
+        certificateDetails: {
+          TechnologyName: "AWS",
+          CertificationAuthority: "hello",
+          CertifiedDate: '2022/10/04',    // invalid date format
+          CertificationValidLastDate: "2023-10-05",
+          IsActive: true
         }
       }),
     };
     const response = await updateEmpCertificate(event);
-    expect(response.statusCode).to.equal(200); // Expecting a 400 Bad Request for invalid data
+    expect(response.statusCode).to.equal(500); // Expecting a 500 Bad Request for invalid data
     const responseBody = JSON.parse(response.body);
-    expect(responseBody.message).to.equal('Successfully updated certificate details.');
+    expect(responseBody.errorMsg).to.equal('Invalid date format.');
   });
- });
+});

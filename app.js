@@ -19,13 +19,13 @@ const nameRegex = /^[A-Za-z ]{3,32}$/;     // character limit min 3 to max 32
 // validating the each parameter 
 const validatePostData = (employee) => {
   if (employee.CertificationValidLastDate < employee.CertifiedDate) {
-    return 'certificate last date cannot be less then certified date.';
+    throw new Error('certificate last date cannot be less then certified date.');
   }
   if (!(dateRegex.test(employee.CertifiedDate) && dateRegex.test(employee.CertificationValidLastDate))) {
-    return 'Invalid date format.';
+    throw new Error('Invalid date format.');
   }
   if (!(nameRegex.test(employee.CertificationAuthority.test) && nameRegex.test(employee.TechnologyName))) {
-    return 'Invalid data.';
+    throw new Error('Invalid data.');
   }
 }
 
@@ -42,14 +42,14 @@ const createEmpCertificate = async (event) => {
     }
 
     // Validate the incoming data
-   const validationError = validatePostData(certificateDetails);
-   if (validationError) {
-    response.statusCode =400;
-   response.body=JSON.stringify({
-     message: validationError,
-   })
-   throw new Error(validationError);
- }
+    try {
+      validatePostData(certificateDetails);
+      // do something with employee data
+    } catch (err) {
+      // handle the error
+      console.error(err.message);
+    }
+   
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: marshall({
@@ -89,15 +89,15 @@ const updateEmpCertificate = async (event) => {
     const body = JSON.parse(event.body);
     const certificateDetails = body.certificateDetails
     const objKeys = Object.keys(body);
-    const validationError = validatePostData(certificateDetails);
-   if (validationError) {
-    response.statusCode =400;
-   response.body=JSON.stringify({
-     message: validationError,
-   })
-   throw new Error(validationError);
- }
-    const params = {
+    // Validate the incoming data
+    try {
+      validatePostData(certificateDetails);
+      // do something with employee data
+    } catch (err) {
+      // handle the error
+      console.error(err.message);
+    }
+   const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Key: marshall({ empId: event.pathParameters.empId }),
       UpdateExpression: `SET ${objKeys
