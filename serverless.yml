@@ -7,7 +7,7 @@ provider:
   environment:
     EMPLOYEE_TABLE: ${self:custom.employeeTableName}
 custom:
-  employeeTableName: experienceInfo-${self:provider.stage}
+  employeeTableName: employee-table-${self:provider.stage}
 plugins:
   - serverless-iam-roles-per-function
 functions:
