@@ -5,29 +5,43 @@ provider:
   stage: prod
   region: ap-south-1
   environment:
-    EMPLOYEE_TABLE: ${self:custom.employeeTableName}
+    DYNAMODB_TABLE_NAME: ${self:custom.employeeTableName}
 custom:
-  employeeTableName: certificateDetails-${self:provider.stage}
+  employeeTableName: employee-table-${self:provider.stage}
 plugins:
   - serverless-iam-roles-per-function
 functions:
   createPost:
-    handler: app.employeeCertificate
+    handler: app.createEmpCertificate
     name: employee-certificate-post
-    memorySize: 128
-    timeout: 5
+    memorySize: 128 # mb
+    timeout: 5 # seconds
     events:
       - http:
-          method: POST
           path: employee/certificate
-          cors: true
+          method: POST
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:PutItem"
+        Resource: !GetAtt PostsTable.Arn
+  updatePost:
+    handler: app.updateEmpCertificate
+    name: employee-certificate-update
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
       - http:
-          method: PUT
           path: employee/certificate/{empId}
-          cors: true
+          method: PUT
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:UpdateItem"
+        Resource: !GetAtt PostsTable.Arn
 resources:
   Resources:
-    createPost:
+    PostsTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:custom.employeeTableName}
@@ -40,5 +54,3 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES

@@ -29,9 +29,10 @@ const validatePostData = (employee) => {
   }
 }
 
-const employeeCertificate = async (event) => {                      // creating a employee certification data
-  if(event.body.empId){
-    const response = { statusCode: 200 };
+// creating a employee certification data
+const createEmpCertificate = async (event) => {
+  console.log("inside the create certification details");
+  const response = { statusCode: 200 };
   try {
     const body = JSON.parse(event.body);
     const certificateDetails = body.certificateDetails
@@ -41,14 +42,14 @@ const employeeCertificate = async (event) => {                      // creating 
     }
 
     // Validate the incoming data
-   const validationError = validatePostData(certificateDetails);
-   if (validationError) {
-    response.statusCode =400;
-   response.body=JSON.stringify({
-     message: validationError,
-   })
-   throw new Error(validationError);
- }
+    const validationError = validatePostData(certificateDetails);
+    if (validationError) {
+      response.statusCode = 400;
+      response.body = JSON.stringify({
+        message: validationError,
+      })
+      throw new Error(validationError);
+    }
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: marshall({
@@ -79,60 +80,64 @@ const employeeCertificate = async (event) => {                      // creating 
     });
   }
   return response;
-  }else{
-    const response = { statusCode: 200 };         // updating the employee certification details by employee id
-    try {
-      const body = JSON.parse(event.body);
-      const certificateDetails = body.certificateDetails
-      const objKeys = Object.keys(body);
-      const validationError = validatePostData(certificateDetails);
-     if (validationError) {
-      response.statusCode =400;
-     response.body=JSON.stringify({
-       message: validationError,
-     })
-     throw new Error(validationError);
-   }
-      const params = {
-        TableName: process.env.DYNAMODB_TABLE_NAME,
-        Key: marshall({ empId: event.pathParameters.empId }),
-        UpdateExpression: `SET ${objKeys
-          .map((_, index) => `#key${index} = :value${index}`)
-          .join(', ')}`,
-        ExpressionAttributeNames: objKeys.reduce(
+};
+
+// updating the employee certification details by employee id
+const updateEmpCertificate = async (event) => {
+  const response = { statusCode: 200 };
+  try {
+    const body = JSON.parse(event.body);
+    const certificateDetails = body.certificateDetails
+    const objKeys = Object.keys(body);
+    const validationError = validatePostData(certificateDetails);
+    if (validationError) {
+      response.statusCode = 400;
+      response.body = JSON.stringify({
+        message: validationError,
+      })
+      throw new Error(validationError);
+    }
+    const params = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      Key: marshall({ empId: event.pathParameters.empId }),
+      UpdateExpression: `SET ${objKeys
+        .map((_, index) => `#key${index} = :value${index}`)
+        .join(', ')}`,
+      ExpressionAttributeNames: objKeys.reduce(
+        (acc, key, index) => ({
+          ...acc,
+          [`#key${index}`]: key,
+        }),
+        {}
+      ),
+      ExpressionAttributeValues: marshall(
+        objKeys.reduce(
           (acc, key, index) => ({
             ...acc,
-            [`#key${index}`]: key,
+            [`:value${index}`]: body[key],
           }),
           {}
-        ),
-        ExpressionAttributeValues: marshall(
-          objKeys.reduce(
-            (acc, key, index) => ({
-              ...acc,
-              [`:value${index}`]: body[key],
-            }),
-            {}
-          )
-        ),
-      };
-      const updateResult = await client.send(new UpdateItemCommand(params));
-      response.body = JSON.stringify({
-        message: 'Successfully updated certificate details.',
-        updateResult,
-      });
-    } catch (e) {
-      console.error(e);
-      response.statusCode = 500;
-      response.body = JSON.stringify({
-        message: 'Failed to update certificate details.',
-        errorMsg: e.message,
-        errorStack: e.stack,
-      });
-    }
-    return response;
+        )
+      ),
+    };
+    const updateResult = await client.send(new UpdateItemCommand(params));
+    response.body = JSON.stringify({
+      message: 'Successfully updated certificate details.',
+      updateResult,
+    });
+  } catch (e) {
+    console.error(e);
+    response.statusCode = 500;
+    response.body = JSON.stringify({
+      message: 'Failed to update certificate details.',
+      errorMsg: e.message,
+      errorStack: e.stack,
+    });
   }
-}
+  return response;
+};
+
 module.exports = {
-  employeeCertificate
+  createEmpCertificate,
+  updateEmpCertificate
 };
