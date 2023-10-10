@@ -1,47 +1,33 @@
-service: serverless-employee-portal-service 
+service: serverless-employee-portal-service
 provider:
   name: aws
   runtime: nodejs18.x
   stage: prod
   region: ap-south-1
   environment:
-    DYNAMODB_TABLE_NAME: ${self:custom.employeeTableName}
+    EMPLOYEE_TABLE: ${self:custom.employeeTableName}
 custom:
-  employeeTableName: employee-table-${self:provider.stage}
+  employeeTableName: experienceInfo-${self:provider.stage}
 plugins:
   - serverless-iam-roles-per-function
 functions:
   createPost:
     handler: app.createEmpCertificate
     name: employee-certificate-post
-    memorySize: 128 # mb
-    timeout: 5 # seconds
+    memorySize: 128
+    timeout: 5
     events:
       - http:
-          path: employee/certificate
           method: POST
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:PutItem"
-        Resource: !GetAtt PostsTable.Arn
-  updatePost:
-    handler: app.updateEmpCertificate
-    name: employee-certificate-update
-    memorySize: 128 # mb
-    timeout: 5 # seconds
-    events:
+          path: employee/certificate
+          cors: true
       - http:
-          path: employee/certificate/{empId}
           method: PUT
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - "dynamodb:UpdateItem"
-        Resource: !GetAtt PostsTable.Arn
+          path: employee/certificate/{empId}
+          cors: true
 resources:
   Resources:
-    PostsTable:
+    createPost:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:custom.employeeTableName}
@@ -54,3 +40,5 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
