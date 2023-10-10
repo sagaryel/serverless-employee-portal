@@ -7,12 +7,12 @@ provider:
   environment:
     EMPLOYEE_TABLE: ${self:custom.employeeTableName}
 custom:
-  employeeTableName: employee-table-${self:provider.stage}
+  employeeTableName: certificateDetails-${self:provider.stage}
 plugins:
   - serverless-iam-roles-per-function
 functions:
   createPost:
-    handler: app.createEmpCertificate
+    handler: app.employeeCertificate
     name: employee-certificate-post
     memorySize: 128
     timeout: 5
