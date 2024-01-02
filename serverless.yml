@@ -39,6 +39,62 @@ functions:
         Action:
           - "dynamodb:UpdateItem"
         Resource: !GetAtt PostsTable.Arn
+  getPost:
+    handler: app.getCertificates
+    name: employee-certificate-get
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: employee/certificate/{empId}
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource: !GetAtt PostsTable.Arn
+  getAllPost:
+    handler: app.getAllCertificates
+    name: employee-certificate-getAll
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: employee/certificate
+          method: GET
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:GetItem"
+        Resource: !GetAtt PostsTable.Arn
+  deletePost:
+    handler: app.deleteCertificatesById
+    name: employee-certificate-delete
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: employee/certificate/{empId}
+          method: DELETE
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:DeleteItem"
+        Resource: !GetAtt PostsTable.Arn
+  deleteAllPost:
+    handler: app.deleteAllCertificates
+    name: employee-certificate-deleteAll
+    memorySize: 128 # mb
+    timeout: 5 # seconds
+    events:
+      - http:
+          path: employee/certificate
+          method: DELETE
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "dynamodb:DeleteItem"
+        Resource: !GetAtt PostsTable.Arn
 resources:
   Resources:
     PostsTable:

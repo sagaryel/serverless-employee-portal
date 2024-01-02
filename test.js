@@ -69,7 +69,7 @@ describe('createEmployee unit tests', () => {
           CertificationAuthority: "hello",
           CertifiedDate: '2022-10-04',    // invalid date format
           CertificationValidLastDate: "2023-10-05",
-          IsActive: true                           
+          IsActive: true
         }
       }),
     };
@@ -113,7 +113,7 @@ describe('updateEmployee unit tests', () => {
         certificateDetails: {
           TechnologyName: "AWS",
           CertificationAuthority: "hello",
-          CertifiedDate: '2022/10/04',    // invalid date format
+          CertifiedDate: '2022-10/04',    // invalid date format
           CertificationValidLastDate: "2023-10-05",
           IsActive: true
         }

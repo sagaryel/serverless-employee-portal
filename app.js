@@ -137,7 +137,152 @@ const updateEmpCertificate = async (event) => {
   return response;
 };
 
+
+const getCertificates = async (event) => {
+  const response = { statusCode: 200 };
+  console.log('event', event);
+  console.log('response', response);
+  try {
+    if (event.pathParameters && event.pathParameters.empID) {
+      // If empID is provided in the path parameters, retrieve a specific certificate
+      const params = {
+        TableName: process.env.DYNAMODB_TABLE_NAME,
+        Key: marshall({ empID: event.pathParameters.empID }),
+      };
+      const { Item } = await client.send(new GetItemCommand(params));
+      console.log('Item', JSON.stringify(Item, null, 2));
+
+      response.body = JSON.stringify({
+        message: `Successfully retrieved empId: ${event.pathParameters.empID}`,
+        data: Item ? unmarshall(Item) : {},
+        rawData: Item,
+      });
+    }
+  } catch (e) {
+    console.error(e);
+    response.statusCode = 500;
+    response.body = JSON.stringify({
+      message: 'Failed to get certificates.',
+      errorMsg: e.message,
+      errorStack: e.stack,
+    });
+    console.log(response.body);
+  }
+
+  return response;
+};
+
+const getAllCertificates = async (event) => {
+  const response = { statusCode: 200 };
+  console.log('event', event);
+  console.log('response', response);
+  try {
+    const { Items } = await client.send(
+      new ScanCommand({ TableName: process.env.DYNAMODB_TABLE_NAME })
+    );
+
+    response.body = JSON.stringify({
+      message: 'Successfully retrieved all Certificates',
+      data: Items?.map((item) => unmarshall(item)),
+      Items,
+    });
+  } catch (e) {
+    console.error(e);
+    response.statusCode = 500;
+    response.body = JSON.stringify({
+      message: 'Failed to get certificates.',
+      errorMsg: e.message,
+      errorStack: e.stack,
+    });
+    console.log(response.body);
+  }
+
+  return response;
+};
+
+
+const deleteCertificatesById = async (event) => {
+  const response = { statusCode: 200 };
+  console.log('event', event);
+  console.log('response', response);
+  try {
+    // Define the update expression to set isActive to true
+    const updateExpression = 'SET isActive = :isActive';
+    // Define the expression attribute values
+    const expressionAttributeValues = marshall({
+      ':isActive': true,
+    });
+    const softDeleteParams = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      Key: marshall({ certificationId: certificationId }),
+      UpdateExpression: updateExpression,
+      ExpressionAttributeValues: expressionAttributeValues,
+    };
+    const softDeleteResult = await client.send(new UpdateItemCommand(softDeleteParams));
+    response.body = JSON.stringify({
+      message: 'Certification soft-deleted successfully.',
+      softDeleteResult,
+    });
+  } catch (e) {
+    console.error(e);
+    response.statusCode = 500;
+    response.body = JSON.stringify({
+      message: 'Failed to get certificates.',
+      errorMsg: e.message,
+      errorStack: e.stack,
+    });
+    console.log(response.body);
+  }
+
+  return response;
+};
+
+
+const deleteAllCertificates = async (event) => {
+  const response = { statusCode: 200 };
+  console.log('event', event);
+  console.log('response', response);
+  try {
+    const getItemParams = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      Key: marshall({ certificationId }),
+    };
+    const { Item } = await client.send(new GetItemCommand(getItemParams));
+    if (!Item) {
+      response.statusCode = 404;
+      response.body = JSON.stringify({
+        message: `Certification with certificationId ${certificationId} not found`,
+      });
+      return response;
+    }
+    const deleteParams = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      Key: marshall({ certificationId }),
+    };
+    const deleteResult = await client.send(new DeleteItemCommand(deleteParams));
+    response.body = JSON.stringify({
+      message: 'Certification deleted successfully.',
+      deleteResult,
+    });
+  } catch (e) {
+    console.error(e);
+    response.statusCode = 500;
+    response.body = JSON.stringify({
+      message: 'Failed to get certificates.',
+      errorMsg: e.message,
+      errorStack: e.stack,
+    });
+    console.log(response.body);
+  }
+  return response;
+};
+
+
 module.exports = {
   createEmpCertificate,
-  updateEmpCertificate
+  updateEmpCertificate,
+  getCertificates,
+  getAllCertificates,
+  deleteCertificatesById,
+  deleteAllCertificates
 };
